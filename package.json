@@ -1,0 +1,15 @@
+{
+  "name": "schaper",
+  "version": "0.0.3",
+  "description": "Trabalho de Computação Distribuída",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "@Cyrkran",
+  "license": "MIT",
+  "dependencies": {
+    "bluebird": "^3.5.1",
+    "express": "^4.16.2"
+  }
+}
