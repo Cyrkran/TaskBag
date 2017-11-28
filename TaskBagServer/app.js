@@ -72,12 +72,14 @@ wsServer.on('request', function(request) {
         }
         else if (data.path === 'error') {
             taskBag.dropTask(data.idTask);
+            connection.send('{"id": null}');
         }
         else if(data.path === 'success'){
 			let count = taskBag.getCount();
 			if(count < taskBag.size){
 				var pi = taskBag.GetPi();
 			}
+			connection.send('{"id": null}');
 		}
     });
     connection.on('close', function(reasonCode, description) {

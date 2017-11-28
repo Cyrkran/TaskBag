@@ -31,7 +31,8 @@ function TaskBagController($scope) {
 		let data = JSON.parse(msg.data);
 		console.log(data);
 		
-		self.getDistanceToCenter(data);
+		if(data.id != null)
+			self.getDistanceToCenter(data);
 		
 		if(!$scope.$$phase) $scope.$apply();
 	}.bind(this);
@@ -53,14 +54,14 @@ function TaskBagController($scope) {
 	
 	this.init = function(){
 		var self = this;
-		self.notificationWs = new WebSocket('ws://localhost:8080/', ['echo-protocol']);
+		self.notificationWs = new WebSocket('ws://10.2.5.5:8080/', ['echo-protocol']);
 		self.notificationWs.onmessage = self.onMessage;
-		self.notificationWs.onopen = function(opn){ this.notificationWs.send(JSON.stringify({'path':"takeTask"})); }.bind(self);
+		//self.notificationWs.onopen = function(opn){  }.bind(self);
 		
-		//self.interval();
+		self.interval();
 	};
 	
 	this.interval = function(){
-		setInterval(function(){ this.notificationWs.send("takeTask"); }.bind(this), 3000);
+		setInterval(function(){ this.notificationWs.send(JSON.stringify({'path':"takeTask"})); }.bind(this), 3000);
 	};
 };

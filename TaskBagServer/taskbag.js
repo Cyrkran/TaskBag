@@ -4,7 +4,7 @@ var express = require('express');
 var TaskBag = function(){
 	
 	this.n = [];
-	const size = 3;
+	const size = 10;
 	var count = 0;
 	
 	this.getTask = function(){
@@ -23,7 +23,6 @@ var TaskBag = function(){
 				return elmnt;
 			}
 		}
-
 	};
 	
 	this.dropTask = function(task){
@@ -46,7 +45,7 @@ var TaskBag = function(){
 	};
 	
 	this.GetPi = function(){
-		
+		console.log((this.n.length * 4) / size);
 	};
 	
 	this.generatePoints();
