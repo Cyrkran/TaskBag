@@ -4,7 +4,8 @@ var express = require('express');
 var TaskBag = function(){
 	
 	this.n = [];
-	const size = 10;
+	this.succeed = [];
+	this.size = 100;
 	var count = 0;
 	
 	this.getTask = function(){
@@ -12,40 +13,52 @@ var TaskBag = function(){
 		if(this.n.length == 0)
 			return;
 			
-		var task = Math.floor(Math.random() * size) + 1;
 		
-		if(count < size){
-			var elmnt = this.n.find(function(element){
-				return element.id == task;
-			});
-			if(elmnt){
-				++count;
-				return elmnt;
+		if(count < this.size){
+			var elmnt = undefined;
+			while(!elmnt){
+				var task = Math.floor(Math.random() * this.size) + 1;
+				elmnt = this.n.find(function(element){
+					return element.id == task;
+				});
+				if(elmnt){
+					++count;
+					return elmnt;
+				}
 			}
 		}
 	};
-	
+	this.success = function(idTask){
+		this.succeed.push(this.n.find(function(el){
+			return idTask == el.id
+		}));
+		this.dropTask(idTask);
+		
+	};
 	this.dropTask = function(task){
 		var index = this.n.findIndex(function(element){
 			return element.id == task;
 		});
 		
 		this.n.splice(index, 1);
-		console.log(this.n);
+		//console.log(this.n);
 	};
 	
-	this.getCount = function(){ return this.count;};
+	this.getCount = function(){ 
+		return count;
+	};
 	
 	this.generatePoints = function(){
 		var self = this;
-		for(let i = 0; i < size; i++){
+		for(let i = 0; i < this.size; i++){
 			self.n.push({"id": (i + 1), "pontos": [Math.random(),Math.random()]});
 		}
 		
 	};
 	
 	this.GetPi = function(){
-		console.log((this.n.length * 4) / size);
+		console.log(this.succeed);
+		return ((this.succeed.length * 4) / this.size);
 	};
 	
 	this.generatePoints();

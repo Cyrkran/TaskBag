@@ -68,16 +68,25 @@ wsServer.on('request', function(request) {
             var obj = taskBag.getTask();
             //obj.request = 'takeTask';            
             
-            connection.send(JSON.stringify(obj));
+            var retorno = JSON.stringify(obj)
+            if(retorno != undefined){
+				connection.send(retorno);
+			}
+			
         }
         else if (data.path === 'error') {
             taskBag.dropTask(data.idTask);
             connection.send('{"id": null}');
         }
         else if(data.path === 'success'){
+			//console.log(taskBag.n);
+			taskBag.success(data.idTask);
 			let count = taskBag.getCount();
-			if(count < taskBag.size){
+			//console.log(count);
+			if(count >= taskBag.size){
 				var pi = taskBag.GetPi();
+				console.log("Valor de PI para esse caso é: " + pi);
+				connection.close();
 			}
 			connection.send('{"id": null}');
 		}

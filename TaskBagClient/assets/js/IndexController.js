@@ -44,12 +44,14 @@ function TaskBagController($scope) {
 		var origem = [0,0];
 		//d = raiz ( (Xa-Xb)² + (Ya-Yb)² )
 
-		var d = Math.sqrt( Math.pow(origem[0] - pontos[0]) + Math.pow(origem[1] - pontos[1]));
+		var d = Math.sqrt( ((origem[0] - pontos[0]) * (origem[0] - pontos[0])) +((origem[1] - pontos[1]) * (origem[1] - pontos[1])));
 		
-		if(d <= 1)
+		if(d <= 1){
 			this.notificationWs.send(JSON.stringify({'path': 'success', 'idTask': task.id}));
-		else
+		}
+		else{
 			this.notificationWs.send(JSON.stringify({'path': 'error', 'idTask': task.id}));
+		}
 	};
 	
 	this.init = function(){
@@ -58,10 +60,18 @@ function TaskBagController($scope) {
 		self.notificationWs.onmessage = self.onMessage;
 		//self.notificationWs.onopen = function(opn){  }.bind(self);
 		
-		self.interval();
+		self.interval(100);
 	};
 	
-	this.interval = function(){
-		setInterval(function(){ this.notificationWs.send(JSON.stringify({'path':"takeTask"})); }.bind(this), 3000);
+	this.interval = function(size){
+		size = size ? size : 1;
+		setInterval(function(){
+			if(size > 0){
+				this.notificationWs.send(JSON.stringify({'path':"takeTask"}));
+				--size;
+			}else{
+				clearInterval();
+			}
+		}.bind(this), 1000);
 	};
 };
