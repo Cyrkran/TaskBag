@@ -1,23 +1,61 @@
 var express = require('express');
-var bodyParser = require('body-parser');
-
-
 var app = express();
 
-app.use(bodyParser.json({limit: '50mb', extended: true})); //Allow sending a Javascript Object in a request
-app.use(bodyParser.urlencoded({limit: '50mb', extended: true})); //Allows you to send you high load data
 
-app.listen(3000);
-console.log("App running on port 3000");
-app.use(express.static(__dirname));
 
-app.use(function (req, res, next) {
+var WebSocketClient = require('websocket').client;
 
-  res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Methods', 'GET');
-  res.setHeader('Access-Control-Allow-Headers', 'X-Requested-With,content-type');
-  res.setHeader('Access-Control-Allow-Credentials', true);
-  next();
+var client = new WebSocketClient();
+
+client.on('connectFailed', function(error) {
+   console.log('Connect Error: ' + error.toString());
 });
 
-module.exports = app;
+client.on('connect', function(connection) {
+   console.log('WebSocket Client Connected');
+   connection.on('error', function(error) {
+       console.log("Connection Error: " + error.toString());
+   });
+   connection.on('close', function() {
+       console.log('echo-protocol Connection Closed');
+   });
+   connection.on('message', function(message) {
+      let data = JSON.parse(message.utf8Data);
+      
+      if(data.id != null){
+        
+        console.log(data);        
+        console.log("Received Object id: '" + data.id + "'");
+        getDistanceToCenter(data);
+
+      }
+   });
+   
+   function sendNumber() {
+       if (connection.connected) {
+           connection.send(JSON.stringify({'path':"takeTask"}));
+           setTimeout(sendNumber, 1000);
+       }
+   }
+
+    function getDistanceToCenter(task){
+
+      var pontos = task.pontos;
+      var origem = [0,0];
+      //d = raiz ( (Xa-Xb)² + (Ya-Yb)² )
+
+      var d = Math.sqrt( ((origem[0] - pontos[0]) * (origem[0] - pontos[0])) +((origem[1] - pontos[1]) * (origem[1] - pontos[1])));
+
+      if(d <= 1){
+       connection.send(JSON.stringify({'path': 'success', 'idTask': task.id}));
+      }
+      else{
+       connection.send(JSON.stringify({'path': 'error', 'idTask': task.id}));
+      }
+    };
+   sendNumber();
+});
+
+
+client.connect('ws://192.168.5.1:8080/', 'echo-protocol');
+
