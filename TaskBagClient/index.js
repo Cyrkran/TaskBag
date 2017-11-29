@@ -14,10 +14,10 @@ client.on('connectFailed', function(error) {
 client.on('connect', function(connection) {
    console.log('WebSocket Client Connected');
    connection.on('error', function(error) {
-       console.log("Connection Error: " + error.toString());
+
    });
    connection.on('close', function() {
-       console.log('echo-protocol Connection Closed');
+       console.log("Conexão Finalizada. Concluído com sucesso");
    });
    connection.on('message', function(message) {
       let data = JSON.parse(message.utf8Data);
